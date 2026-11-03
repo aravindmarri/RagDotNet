@@ -7,6 +7,19 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <!-- Let the test/eval project reach the internal Rag types. -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="RagDotNet.Tests" />
+  </ItemGroup>
+
+  <!-- The test project is a nested folder; keep its files out of this app's build. -->
+  <ItemGroup>
+    <Compile Remove="RagDotNet.Tests\**" />
+    <Content Remove="RagDotNet.Tests\**" />
+    <EmbeddedResource Remove="RagDotNet.Tests\**" />
+    <None Remove="RagDotNet.Tests\**" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.VectorData.InMemory" Version="1.0.1" />
     <PackageReference Include="Microsoft.Extensions.AI" Version="10.11.0" />

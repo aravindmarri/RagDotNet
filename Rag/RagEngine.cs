@@ -56,8 +56,12 @@ internal sealed class RagEngine
         return count;
     }
 
-    /// <summary>Retrieves the top matches and generates a grounded answer.</summary>
-    public async Task<RagAnswer> AskAsync(string question, int topK = 4)
+    /// <summary>
+    /// The retrieval step on its own: embeds the question and returns the closest
+    /// passages, ordered from closest to least close. Exposed separately so you can
+    /// test retrieval without paying for (or being misled by) generation.
+    /// </summary>
+    public async Task<IReadOnlyList<Match>> RetrieveAsync(string question, int topK = 4)
     {
         ReadOnlyMemory<float> queryVector = await _embedder.GenerateVectorAsync(question);
 
@@ -67,6 +71,14 @@ internal sealed class RagEngine
         {
             matches.Add(new Match(result.Record.Source, result.Record.Text, result.Score ?? 0));
         }
+
+        return matches;
+    }
+
+    /// <summary>Retrieves the top matches and generates a grounded answer.</summary>
+    public async Task<RagAnswer> AskAsync(string question, int topK = 4)
+    {
+        IReadOnlyList<Match> matches = await RetrieveAsync(question, topK);
 
         string context = string.Join(
             "\n\n",

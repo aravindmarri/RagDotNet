@@ -2,6 +2,9 @@
 bin/
 obj/
 
+# Test run results
+TestResults/
+
 # Visual Studio
 .vs/
 *.user
